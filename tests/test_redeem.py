@@ -2,7 +2,6 @@ import unittest
 from flask import json
 import webapp
 from webapp.redeem import ResultType, redeem
-from webapp.database import db_session, drop_all_table
 
 
 class IAPTestCase(unittest.TestCase):
@@ -45,19 +44,39 @@ class IAPTestCase(unittest.TestCase):
         self.assertEqual(ResultType.EMAIL_FAIL, receive_result['result'])
 
     def test_redeem_gift_return_correct(self):
-        email_a = 'takachi@softstar.com.tw'
-        receive_rv = self.client.post(
+        redeem_code = self._get_redeem_code('takachi@softstar.com.tw')
+        self.assertEqual(ResultType.REDEEM_GIFT_SUCCESS,
+                         self._redeem_gift('wes@softstar.com.tw', redeem_code))
+
+    def test_redeem_gift_return_redeem_gift_count_fail(self):
+        redeem_code_a = self._get_redeem_code('takachi_a@softstar.com.tw')
+        redeem_code_b = self._get_redeem_code('takachi_b@softstar.com.tw')
+        redeem_code_c = self._get_redeem_code('takachi_c@softstar.com.tw')
+        redeem_code_d = self._get_redeem_code('takachi_d@softstar.com.tw')
+
+        self.assertEqual(ResultType.REDEEM_GIFT_SUCCESS,
+                         self._redeem_gift('wes@softstar.com.tw', redeem_code_a))
+        self.assertEqual(ResultType.REDEEM_GIFT_SUCCESS,
+                         self._redeem_gift('wes@softstar.com.tw', redeem_code_b))
+        self.assertEqual(ResultType.REDEEM_GIFT_CONT_GREATER_THAN_THREE_FAIL,
+                         self._redeem_gift('wes@softstar.com.tw', redeem_code_c))
+        self.assertEqual(ResultType.REDEEM_GIFT_CONT_GREATER_THAN_THREE_FAIL,
+                         self._redeem_gift('wes@softstar.com.tw', redeem_code_d))
+
+    def _get_redeem_code(self, email):
+        receive_a_rv = self.client.post(
             '/redeem/redeem_code',
-            data=dict(email=email_a),
+            data=dict(email=email),
             follow_redirects=False)
 
-        receive_result = json.loads(str(receive_rv.data, 'utf-8'))
+        receive_result = json.loads(str(receive_a_rv.data, 'utf-8'))
+        return receive_result['redeem_code']
 
-        email_b = 'wes@softstar.com.tw'
+    def _redeem_gift(self, email, redeem_code):
         redeem_gift_rv = self.client.post(
             '/redeem/redeem_gift',
-            data=dict(email=email_b, redeem_code=receive_result['redeem_code']),
+            data=dict(email=email, redeem_code=redeem_code),
             follow_redirects=False)
 
         redeem_gift_result = json.loads(str(redeem_gift_rv.data, 'utf-8'))
-        self.assertEqual(ResultType.REDEEM_GIFT_SUCCESS, redeem_gift_result['result'])
+        return redeem_gift_result['result']

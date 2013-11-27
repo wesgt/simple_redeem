@@ -90,7 +90,7 @@ def redeem_gift():
 
     # check redeem count <= 3
     redeem_gifts = RedeemGift.query.filter(User.email == email).all()
-    if not redeem_gifts and len(redeem_gifts) >= 3:
+    if redeem_gifts and len(redeem_gifts) >= 3:
         return jsonify(result=ResultType.REDEEM_GIFT_CONT_GREATER_THAN_THREE_FAIL)
 
     redeem_gifts = RedeemGift(email, redeem_code)
