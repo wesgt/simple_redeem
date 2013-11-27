@@ -9,6 +9,10 @@ redeem = Blueprint('redeem', __name__, template_folder='templates')
 class ResultType:
     RECEIVE_SUCCESS = 'receive_success'
     EMAIL_FAIL = 'email_fail'
+    REDEEM_GIFT_SUCCESS = 'redeem_gift_success'
+    EMAIL_NOT_RECEIVE_REDEEM_CODE_FAIL = 'email_not_receive_redeem_code_fail'
+    REDEEM_GIFT_CONT_GREATER_THAN_THREE_FAIL = 'redeem_gift_count_greater_than_three_fail'
+    REDEEM_CODE_FAIL = 'redeem_code_fail'
 
 
 @redeem.route('/redeem_code', methods=['POST'])
@@ -56,3 +60,40 @@ def _validate_email(email):
         if re.match(mail_pattern, email) is not None:
             return True
     return False
+
+@redeem.route('/redeem_gift', methods=['POST'])
+def redeem_gift():
+    """redeem gift
+
+    everyone can redeem gift count <= 3
+
+    """
+
+    from webapp.models import User, RedeemGift
+
+    email = request.form['email']
+    redeem_code = request.form['redeem_code']
+
+    if not _validate_email(email):
+        return jsonify(result=ResultType.EMAIL_FAIL)
+
+    user = User.query.filter(User.email == email).first()
+
+    # check email receive redeem code
+    if user is None:
+        return jsonify(result=ResultType.EMAIL_NOT_RECEIVE_REDEEM_CODE_FAIL)
+
+    user = User.query.filter(User.redeem_code == redeem_code).first()
+
+    if user is None:
+        return jsonify(result=ResultType.REDEEM_CODE_FAIL)
+
+    # check redeem count <= 3
+    redeem_gifts = RedeemGift.query.filter(User.email == email).all()
+    if not redeem_gifts and len(redeem_gifts) >= 3:
+        return jsonify(result=ResultType.REDEEM_GIFT_CONT_GREATER_THAN_THREE_FAIL)
+
+    redeem_gifts = RedeemGift(email, redeem_code)
+    redeem_gifts.save()
+
+    return jsonify(result=ResultType.REDEEM_GIFT_SUCCESS)

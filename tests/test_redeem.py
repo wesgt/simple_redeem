@@ -43,3 +43,21 @@ class IAPTestCase(unittest.TestCase):
 
         receive_result = json.loads(str(receive_rv.data, 'utf-8'))
         self.assertEqual(ResultType.EMAIL_FAIL, receive_result['result'])
+
+    def test_redeem_gift_return_correct(self):
+        email_a = 'takachi@softstar.com.tw'
+        receive_rv = self.client.post(
+            '/redeem/redeem_code',
+            data=dict(email=email_a),
+            follow_redirects=False)
+
+        receive_result = json.loads(str(receive_rv.data, 'utf-8'))
+
+        email_b = 'wes@softstar.com.tw'
+        redeem_gift_rv = self.client.post(
+            '/redeem/redeem_gift',
+            data=dict(email=email_b, redeem_code=receive_result['redeem_code']),
+            follow_redirects=False)
+
+        redeem_gift_result = json.loads(str(redeem_gift_rv.data, 'utf-8'))
+        self.assertEqual(ResultType.REDEEM_GIFT_SUCCESS, redeem_gift_result['result'])
