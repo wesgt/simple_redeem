@@ -14,6 +14,20 @@ class ResultType:
     REDEEM_GIFT_CONT_GREATER_THAN_THREE_FAIL = 'redeem_gift_count_greater_than_three_fail'
     REDEEM_CODE_FAIL = 'redeem_code_fail'
 
+@redeem.route('/redeem_code_test', methods=['GET'])
+def receive_redeem_code_test():
+
+    from webapp.models import User
+
+    email = 'test@test.com.tw'
+
+    user = User.query.filter(User.email == email).first()
+
+    if user is None:
+        user = User(email, _create_redeem_code(), 0)
+        user.save()
+
+    return jsonify(result=ResultType.RECEIVE_SUCCESS, redeem_code=user.redeem_code)
 
 @redeem.route('/redeem_code', methods=['POST'])
 def receive_redeem_code():

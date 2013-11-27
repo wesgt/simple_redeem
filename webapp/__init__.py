@@ -15,3 +15,13 @@ def create_app(config_filename):
         create_all_test_table()
 
     return app
+
+app = create_app('config_production.cfg')
+
+
+@app.route('/gogolook/')
+def index():
+    return 'gogolook'
+
+from webapp.redeem import redeem
+app.register_blueprint(redeem, url_prefix='/gogolook')

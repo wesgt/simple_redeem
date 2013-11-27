@@ -9,7 +9,7 @@ class IAPTestCase(unittest.TestCase):
     def setUp(self):
         app = webapp.create_app('config_testing.cfg')
         app.config['TESTING'] = True
-        app.register_blueprint(redeem, url_prefix='/redeem')
+        app.register_blueprint(redeem, url_prefix='/gogolook')
         self.client = app.test_client()
 
     def tearDown(self):
@@ -26,7 +26,7 @@ class IAPTestCase(unittest.TestCase):
     def test_receive_redeem_code_return_correct(self):
         email = 'wes@softstar.com.tw'
         receive_rv = self.client.post(
-            '/redeem/redeem_code',
+            '/gogolook/redeem_code',
             data=dict(email=email),
             follow_redirects=False)
 
@@ -36,7 +36,7 @@ class IAPTestCase(unittest.TestCase):
     def test_receive_redeem_code_return_email_error(self):
         email = 'wes'
         receive_rv = self.client.post(
-            '/redeem/redeem_code',
+            '/gogolook/redeem_code',
             data=dict(email=email),
             follow_redirects=False)
 
@@ -65,7 +65,7 @@ class IAPTestCase(unittest.TestCase):
 
     def _get_redeem_code(self, email):
         receive_a_rv = self.client.post(
-            '/redeem/redeem_code',
+            '/gogolook/redeem_code',
             data=dict(email=email),
             follow_redirects=False)
 
@@ -74,7 +74,7 @@ class IAPTestCase(unittest.TestCase):
 
     def _redeem_gift(self, email, redeem_code):
         redeem_gift_rv = self.client.post(
-            '/redeem/redeem_gift',
+            '/gogolook/redeem_gift',
             data=dict(email=email, redeem_code=redeem_code),
             follow_redirects=False)
 
