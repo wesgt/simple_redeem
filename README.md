@@ -6,6 +6,8 @@ simple redeem service
 * receive-redeem-code
 * redeem-gift
 
+test server : http://54.238.225.130/
+
 ## Requirements
 
 * Python 3.3.2
@@ -22,7 +24,7 @@ INPUT
 
 | endpoints           | method    | data        |
 | --------            | --------  | --------    |
-| /redeem/redeem_code | post      | email='user@test.com.tw' |
+| /gogolook/redeem_code | post      | email='user@test.com.tw' |
 
 OUTPUT(json)
 
@@ -39,7 +41,7 @@ INPUT
 
 | endpoints           | method    | data        |
 | --------            | --------  | --------    |
-| /redeem/redeem_gift | post      | email='user@test.com.tw', redeem_code='xxxxxxxx' |
+| /gogolook/redeem_gift | post      | email='user@test.com.tw', redeem_code='xxxxxxxx' |
 
 OUTPUT(json)
 
