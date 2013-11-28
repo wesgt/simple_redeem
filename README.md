@@ -47,5 +47,5 @@ OUTPUT(json)
 
 | parameter   | value     |
 | --------    | --------  |
-| result      | redeem_gift_success, email_not_receive_redeem_code_fail, redeem_gift_count_greater_than_three_fail, redeem_code_fail|
+| result      | redeem_gift_success, email_not_receive_redeem_code_fail, redeem_gift_count_greater_than_three_fail, redeem_code_fail, redeem_code_duplicate_fail, redeem_code_is_me_fail|
 
