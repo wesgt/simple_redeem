@@ -13,6 +13,8 @@ class ResultType:
     EMAIL_NOT_RECEIVE_REDEEM_CODE_FAIL = 'email_not_receive_redeem_code_fail'
     REDEEM_GIFT_CONT_GREATER_THAN_THREE_FAIL = 'redeem_gift_count_greater_than_three_fail'
     REDEEM_CODE_FAIL = 'redeem_code_fail'
+    REDEEM_CODE_DUPLICATE_FAIL = 'redeem_code_duplicate_fail'
+    REDEEM_CODE_IS_ME_FAIL = 'redeem_code_is_me_fail'
 
 @redeem.route('/redeem_code_test', methods=['GET'])
 def receive_redeem_code_test():
@@ -91,12 +93,17 @@ def redeem_gift():
     if not _validate_email(email):
         return jsonify(result=ResultType.EMAIL_FAIL)
 
+    # check email receive redeem code
     user = User.query.filter(User.email == email).first()
 
-    # check email receive redeem code
     if user is None:
         return jsonify(result=ResultType.EMAIL_NOT_RECEIVE_REDEEM_CODE_FAIL)
 
+    # check redeem code is me
+    if user.redeem_code == redeem_code:
+        return jsonify(result=ResultType.REDEEM_CODE_IS_ME_FAIL)
+
+    # check redeem code exit
     user = User.query.filter(User.redeem_code == redeem_code).first()
 
     if user is None:
@@ -106,6 +113,11 @@ def redeem_gift():
     redeem_gifts = RedeemGift.query.filter(User.email == email).all()
     if redeem_gifts and len(redeem_gifts) >= 3:
         return jsonify(result=ResultType.REDEEM_GIFT_CONT_GREATER_THAN_THREE_FAIL)
+
+    # check redeem code duplicate
+    for redeem_gift_data in redeem_gifts:
+        if redeem_gift_data.redeem_code == redeem_code:
+            return jsonify(result=ResultType.REDEEM_CODE_DUPLICATE_FAIL)
 
     redeem_gifts = RedeemGift(email, redeem_code)
     redeem_gifts.save()

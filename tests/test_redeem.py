@@ -58,10 +58,24 @@ class IAPTestCase(unittest.TestCase):
                          self._redeem_gift('wes@softstar.com.tw', redeem_code_a))
         self.assertEqual(ResultType.REDEEM_GIFT_SUCCESS,
                          self._redeem_gift('wes@softstar.com.tw', redeem_code_b))
-        self.assertEqual(ResultType.REDEEM_GIFT_CONT_GREATER_THAN_THREE_FAIL,
+        self.assertEqual(ResultType.REDEEM_GIFT_SUCCESS,
                          self._redeem_gift('wes@softstar.com.tw', redeem_code_c))
         self.assertEqual(ResultType.REDEEM_GIFT_CONT_GREATER_THAN_THREE_FAIL,
                          self._redeem_gift('wes@softstar.com.tw', redeem_code_d))
+
+    def test_redeem_gift_return_redeem_code_is_me_fail(self):
+        redeem_code = self._get_redeem_code('wes@softstar.com.tw')
+        self.assertEqual(ResultType.REDEEM_CODE_IS_ME_FAIL,
+                         self._redeem_gift('wes@softstar.com.tw', redeem_code))
+
+    def test_redeem_gift_return_redeem_code_duplicate_fail(self):
+        self._get_redeem_code('wes2@softstar.com.tw')
+        redeem_code_e = self._get_redeem_code('takachi_e@softstar.com.tw')
+
+        self.assertEqual(ResultType.REDEEM_GIFT_SUCCESS,
+                         self._redeem_gift('wes2@softstar.com.tw', redeem_code_e))
+        self.assertEqual(ResultType.REDEEM_CODE_DUPLICATE_FAIL,
+                         self._redeem_gift('wes2@softstar.com.tw', redeem_code_e))
 
     def _get_redeem_code(self, email):
         receive_a_rv = self.client.post(
