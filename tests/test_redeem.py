@@ -58,7 +58,7 @@ class IAPTestCase(unittest.TestCase):
                          self._redeem_gift('wes@softstar.com.tw', redeem_code_a))
         self.assertEqual(ResultType.REDEEM_GIFT_SUCCESS,
                          self._redeem_gift('wes@softstar.com.tw', redeem_code_b))
-        self.assertEqual(ResultType.REDEEM_GIFT_SUCCESS,
+        self.assertEqual(ResultType.REDEEM_GIFT_CONT_GREATER_THAN_THREE_FAIL,
                          self._redeem_gift('wes@softstar.com.tw', redeem_code_c))
         self.assertEqual(ResultType.REDEEM_GIFT_CONT_GREATER_THAN_THREE_FAIL,
                          self._redeem_gift('wes@softstar.com.tw', redeem_code_d))
