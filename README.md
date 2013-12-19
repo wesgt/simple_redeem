@@ -18,7 +18,7 @@ test server : http://54.238.225.130/
 
 ## RECEIVE_REDEEM_CODE
 
-應用程式可利用此界面用使用者輸入的 email 來取得一個 redeem code
+應用程式可利用此界面用使用者輸入的 email 來取得一個 redeem code.
 
 INPUT
 
