@@ -3,7 +3,7 @@ simple_redeem
 
 simple redeem service.
 
-* receive-redeem-code
+* receive-redeem-code.
 * redeem-gift
 
 test server : http://54.238.225.130/
