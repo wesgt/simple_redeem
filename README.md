@@ -1,7 +1,7 @@
 simple_redeem
 =============
 
-simple redeem service
+simple redeem service.
 
 * receive-redeem-code
 * redeem-gift
